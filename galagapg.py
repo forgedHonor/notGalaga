@@ -1,5 +1,6 @@
 import pygame		# idea from kidscancode/pygametutorials
 import random
+import time
 from os import path
 
 imgdir = path.join(path.dirname(__file__),'images')
@@ -96,12 +97,43 @@ class enemy(pygame.sprite.Sprite):		# enemy ship class
 			self.rect.y = random.randrange(-100,-40)
 			self.speedy = random.randrange(1,10)
 
+#class for the selector in menus(IN ALL MENUS MAKE SURE TO RUN UPDATE TO ENSURE THE SELECTOR RESPONDS TO ARROW KEYS)
+class selector(pygame.sprite.Sprite):
+	def __init__(self):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.transform.scale(selectorPic, (20,20))
+		#self.image.set_colorkey(WHITE)########come back to this, can't get background to go away
+		self.rect = self.image.get_rect()
+		self.rect.x = pause_rec.x + pause_rec.width/4
+		self.rect.y = pause_rec.y + pause_rec.height/4 #initialize over the resume
+	def draw(self):	#draw the selector
+		screen.blit(self.image,self.rect)		
+		
+
 
 background = pygame.image.load(path.join(imgdir, "space.png")).convert()
 background_rect = background.get_rect()
 pilotpic = pygame.image.load(path.join(imgdir, "alienship.png")).convert()
 enemypic = pygame.image.load(path.join(imgdir, "enemy2.png")).convert()
 misslepic = pygame.image.load(path.join(imgdir, "rocket3.png")).convert()
+pausePic = pygame.image.load(path.join(imgdir, "pauseMenu.png")).convert()
+#pause rec details
+pause_rec = pausePic.get_rect()#gets a rectangle to draw pause menu onto based off of size of pic
+pause_rec.x = background_rect.x + (WIDTH/2 - pause_rec.width/2)
+pause_rec.y = background_rect.y + (HEIGHT/2 - pause_rec.height/2)
+
+homePic = pygame.image.load(path.join(imgdir, "homePage.png")).convert()
+selectorPic = pygame.image.load(path.join(imgdir, "selector.png")).convert()
+#selector details
+selectorPauseImage = pygame.transform.scale(selectorPic, (20,20))
+#self.image.set_colorkey(WHITE)########come back to this, can't get background to go away
+selectrect = selectorPauseImage.get_rect()
+selectrect.x = pause_rec.x + pause_rec.width/4
+selectrect.y = pause_rec.y + pause_rec.height/2 #initialize over the resume
+#selector for main menu
+##??
+
+
 
 
 all_sprites = pygame.sprite.Group()
@@ -117,29 +149,67 @@ for i in range(5):			# adding random blocks for enemies
 
 #MAIN LOOP FOR THE GAME
 run = True
+gameState = "play"
 while run:
 	clock.tick(FPS)
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
+	if(gameState=="play"):#game state is play-----------------------------
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				run = False
+			elif event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_SPACE:
+					pilot1.fire()
+				elif event.key == pygame.K_p:#checks for pause button to be pressed
+					gameState = "pause"
+		all_sprites.update()				# update all the sprites
+		#seperate path for paused gamestate	
+	#	elif(gameState == "play"):
+		collisions = pygame.sprite.groupcollide(enemies,missles, True, True) # first true to delete enemy second true to delete missle as it has exploded
+		for col in collisions:
+			e = enemy()
+			all_sprites.add(e)
+			enemies.add(e)
+		collisions = pygame.sprite.spritecollide(pilot1, enemies, False)	# see if pilot hit an enemy
+		if collisions:
 			run = False
-		elif event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_SPACE:
-				pilot1.fire()
-
-	all_sprites.update()				# update all the sprites
-
-	collisions = pygame.sprite.groupcollide(enemies,missles, True, True) # first true to delete enemy second true to delete missle as it has exploded
-	for col in collisions:
-		e = enemy()
-		all_sprites.add(e)
-		enemies.add(e)
-
-	collisions = pygame.sprite.spritecollide(pilot1, enemies, False)	# see if pilot hit an enemy
-	if collisions:
-		run = False
-	screen.fill(BLACK)
-	screen.blit(background, background_rect)
-	all_sprites.draw(screen)		# blits all sprites onto screen
-	pygame.display.flip()
-
+		screen.fill(BLACK)
+		screen.blit(background, background_rect)
+		all_sprites.draw(screen)		# blits all sprites onto screen
+		pygame.display.flip()
+	elif(gameState=="pause"):
+		#check for events
+		#positions
+		resumePos = pause_rec.y + pause_rec.height/2
+		quitPos = pause_rec.y + pause_rec.height/2 + pause_rec.height/7
+		#########################
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				run = False
+			elif event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_p:##if game is set back to play remove the selector sprite
+					gameState = "play"
+				elif event.key ==pygame.K_UP:# and selectrect.y > (pause_rec.y + pause_rec.height/2):#is below it's initial pos
+					selectrect.y = resumePos
+				elif event.key == pygame.K_DOWN:# and selectrect.y < (pause_rec.y + pause_rec.height/2 - pause_rec.height/8):
+					selectrect.y = quitPos
+				elif event.key == pygame.K_RETURN:
+					if(selectrect.y == quitPos):
+						run = False
+					elif(selectrect.y == resumePos):
+						gameState = "play"			
+		#draw menu 
+		screen.fill(BLACK)
+                screen.blit(background, background_rect)
+		##########################
+                all_sprites.draw(screen) 
+		#draw the selector and pause menu
+		screen.blit(pausePic, pause_rec)
+		#now for selector
+                screen.blit(selectorPauseImage,selectrect)
+		pygame.display.flip()
+		
 pygame.quit					# exit game and window
+
+#function to draw the pause menu
+#maybe add
+	
