@@ -154,7 +154,7 @@ for i in range(5):			# adding random blocks for enemies
 
 #MAIN LOOP FOR THE GAME
 run = True
-gameState = "Main Menu"
+gameState = "play"
 while run:
 	clock.tick(FPS)
 	if(gameState=="play"):#game state is play-----------------------------
