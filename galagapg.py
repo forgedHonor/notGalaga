@@ -131,9 +131,14 @@ selectrect = selectorPauseImage.get_rect()
 selectrect.x = pause_rec.x + pause_rec.width/4
 selectrect.y = pause_rec.y + pause_rec.height/2 #initialize over the resume
 #selector for main menu
-##??
+selectorMainImage = pygame.transform.scale(selectorPic, (30, 30))
+selectorMainImage.fill(GREEN)
+selectMainRect = selectorMainImage.get_rect()
+#init main selector next to commence                                         # go back and change these to relative coordiantes
+selectMainRect.x = selectMainRect.x + 275 
+selectMainRect.y = selectMainRect.y + 125
 
-
+#positions on main menu
 
 
 all_sprites = pygame.sprite.Group()
@@ -149,7 +154,7 @@ for i in range(5):			# adding random blocks for enemies
 
 #MAIN LOOP FOR THE GAME
 run = True
-gameState = "play"
+gameState = "Main Menu"
 while run:
 	clock.tick(FPS)
 	if(gameState=="play"):#game state is play-----------------------------
@@ -207,6 +212,36 @@ while run:
 		#now for selector
                 screen.blit(selectorPauseImage,selectrect)
 		pygame.display.flip()
+	elif(gameState=="Main Menu"):
+		#change screen size
+		mainRect = homePic.get_rect()
+		if(screen.get_rect().width != mainRect.width):
+			screen = pygame.display.set_mode((mainRect.width, mainRect.height))
+		#positions for selector
+		commencePos = selectMainRect.y + 125
+		upgradesPos = selectMainRect.y + 150
+		settingsPos = selectMainRect.y + 175	
+		for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                                print("Quiting...")
+				run = False
+			elif event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_UP:# 
+                                        if(selectMainRect.y == upgradesPos):
+						selectMainRect.y = commencePos
+					elif(selectMainRect.y == settingsPos):
+						selectMainRect.y = upgradesPos
+                                elif event.key == pygame.K_DOWN:#
+					if(selectMainRect.y == commencePos):
+						selectMainRect.y = upgrades.pos
+		#Selector for main menu
+		
+		#draw the menu
+		screen.fill(BLACK)
+		screen.blit(homePic, mainRect)
+		#now draw mainSelect
+		screen.blit(selectorMainImage,selectMainRect)
+		pygame.display.flip()	
 		
 pygame.quit					# exit game and window
 
