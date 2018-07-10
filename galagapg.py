@@ -31,12 +31,11 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("THIS IS NOT GALAGA")
 clock = pygame.time.Clock()
-#pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))		# invisible cursor
 
 fonttype = pygame.font.match_font('aerial')
 def show_hud(psurf, text, size, x, y):
 	font = pygame.font.Font(fonttype, size)
-	surface = font.render(text, True, GREEN)
+	surface = font.render(text, True, RED)
 	fontrect = surface.get_rect()
 	fontrect.midtop = (x,y)
 	psurf.blit(surface,fontrect)
@@ -159,6 +158,7 @@ class selector(pygame.sprite.Sprite):
 	def draw(self):							#draw the selector
 		screen.blit(self.image,self.rect)
 
+
 background = pygame.image.load(path.join(imgdir, "space.png")).convert()
 background_rect = background.get_rect()
 pilotpic = pygame.image.load(path.join(imgdir, "alienship.png")).convert()
@@ -191,7 +191,7 @@ selectMainRect.y = selectMainRect.y + 125
 
 explosions = {}
 explosions['big'] = []				# can be used for bigger enemies
-explosions['small'] = []			# used for smaller enemies
+explosions['small'] = []
 for x in range (1,91):
 	explfile = 'explosion1_{}.png'.format(x)
 	explimg = pygame.image.load(path.join(imgdir,explfile)).convert()
@@ -223,11 +223,47 @@ run = True
 posChecker = 1
 pygame.mixer.music.play(loops = -1)
 pygame.mixer.music.set_volume(10.0)
-gameState = "play"
-#gameState = "Main Menu"
+#gamestate = "play"
+gameState = "Main Menu"
 while run:
 	clock.tick(FPS)
-	if(gameState=="play"):														#game state is play-----------------------------
+	if (gameState == "over"):
+		screen.blit(background, background_rect)
+		show_hud(screen, "GAME OVER!", 64, WIDTH / 2, HEIGHT /4)
+		show_hud(screen, "Score: " + str(score), 64, WIDTH / 2, HEIGHT / 2)
+		show_hud(screen, "Press Enter Key to Restart", 58 , WIDTH / 2, HEIGHT * 3 / 4)
+		pygame.display.flip()
+		waiting = True
+		while waiting:
+			clock.tick(FPS)
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					pygame.quit()
+				if event.type == pygame.KEYDOWN:
+					keystate = pygame.key.get_pressed()
+					if keystate[pygame.K_RETURN]:
+						all_sprites = pygame.sprite.Group()
+						missles = pygame.sprite.Group()
+						enemies = pygame.sprite.Group()       # group of enemies
+						pilot1 = pilot()
+						all_sprites.add(pilot1)
+
+						for i in range(5):
+							e = enemy()
+							all_sprites.add(e)
+							enemies.add(e)
+						lives = 3
+						score = 0
+						waiting = False
+
+		screen.fill(BLACK)
+		screen.blit(background, background_rect)
+		all_sprites.draw(screen)
+		show_hud(screen, "SCORE: " + str(score) + "    LIVES: " + str(lives), 28, WIDTH/4 , 8 )
+		pygame.display.flip()
+		gameState = "play"
+
+	if(gameState == "play"):			#game state is play
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
@@ -235,8 +271,6 @@ while run:
 				if event.key == pygame.K_p:  										#checks for pause button to be pressed
 					gameState = "pause"
 		all_sprites.update()													# update all the sprites
-		#seperate path for paused gamestate
-		#elif(gameState == "play"):
 
 		collisions = pygame.sprite.groupcollide(enemies,missles, True, True) 							# first true to delete enemy second true to delete missle as it has exploded
 		for col in collisions:
@@ -256,9 +290,10 @@ while run:
 			e = enemy()
 			all_sprites.add(e)
 			enemies.add(e)
-
-			#time.sleep(1)
-			#run = False
+			lives = lives - 1
+			print(lives)
+			if lives == 0:		#make game over menu/screen here
+				gameState = "over"
 
 		screen.fill(BLACK)
 		screen.blit(background, background_rect)
@@ -270,7 +305,7 @@ while run:
 		#screen.blit(background, background_rect)
 		#all_sprites.draw(screen)									# blits all sprites onto screen
 		#pygame.display.flip()
-	elif(gameState == "pause"):		#check for events    and positions
+	if(gameState == "pause"):		#check for events and positions
 		resumePos = pause_rec.y + pause_rec.height/2
 		quitPos = pause_rec.y + pause_rec.height/2 + pause_rec.height/7
 		#########################
@@ -290,9 +325,6 @@ while run:
 					print(posChecker)
 					if(posChecker == 0):
 						run = False
-						#pygame.display.quit()
-						#pygame.quit()
-						#sys.exit()
 					elif(posChecker == 1):
 						gameState = "play"
 		#draw menu
@@ -306,7 +338,7 @@ while run:
 		screen.blit(selectorPauseImage,selectrect)
 		pygame.display.flip()
 													# exit game and window
-	elif(gameState == "Main Menu"):
+	if(gameState == "Main Menu"):
 		#change screen size
 		mainRect = homePic.get_rect()
 		if(screen.get_rect().width != mainRect.width):
@@ -318,6 +350,14 @@ while run:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				print("Quiting...")
+				# FOLLOWING LINES WILL GET YOU TO ACTUAL GAME READJUSTING THE SCREEN SIZE
+				#screen = pygame.display.set_mode((WIDTH, HEIGHT))
+				#screen.fill(BLACK)
+				#screen.blit(background, background_rect)
+				#all_sprites.draw(screen)
+				#show_hud(screen, str(score), 18, WIDTH / 2, 10)
+				#pygame.display.flip()
+				#gameState = "play"
 				run = False
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_UP:
@@ -335,5 +375,11 @@ while run:
 		#now draw mainSelect
 		screen.blit(selectorMainImage,selectMainRect)
 		pygame.display.flip()
-pygame.quit					# exit game and window
 
+					# exit game and window
+	#screen.fill(BLACK)
+	#screen.blit(background, background_rect)
+	#all_sprites.draw(screen)
+	#show_hud(screen, str(score), 18, WIDTH / 2, 10)
+	#pygame.display.flip()
+pygame.quit()
