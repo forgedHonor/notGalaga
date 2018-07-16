@@ -32,6 +32,17 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("THIS IS NOT GALAGA")
 clock = pygame.time.Clock()
 
+def showshield(surf, x, y, amount):
+	if amount < 0:
+		amount = 0
+	rectlen = 200
+	rectheight = 10
+	shellrec = pygame.Rect(x,y,rectlen, rectheight)		# encapsulates the actual shield bar
+	barrec = pygame.Rect(x,y, amount, rectheight)		# the actual shield bar that changes based on shields that are left
+	pygame.draw.rect(surf, GREEN, barrec)
+	pygame.draw.rect(surf, BLUE, shellrec, 2)
+
+
 fonttype = pygame.font.match_font('aerial')
 def show_hud(psurf, text, size, x, y):
 	font = pygame.font.Font(fonttype, size)
@@ -91,6 +102,7 @@ class pilot(pygame.sprite.Sprite):
 		self.speedx = 0					# can adjust delay with upgrades, smaller delay faster weapon shoots
 		self.delay = 250
 		self.last_shot = pygame.time.get_ticks()
+		self.shield = 200
 
 	def fire(self):
 		now = pygame.time.get_ticks()
@@ -223,8 +235,8 @@ run = True
 posChecker = 1
 pygame.mixer.music.play(loops = -1)
 pygame.mixer.music.set_volume(10.0)
-#gamestate = "play"
-gameState = "Main Menu"
+gameState = "play"
+#gameState = "Main Menu"
 while run:
 	clock.tick(FPS)
 	if (gameState == "over"):
@@ -284,21 +296,25 @@ while run:
 
 		collisions = pygame.sprite.spritecollide(pilot1, enemies, True, pygame.sprite.collide_circle)				# see if enemy ran into the pilot
 		for col in collisions:
-			explshow = explosion(col.rect.center, 'big')
+			#pilot1.shield -= hit.radius * 2			# this could work if we make bigger enemies for harder levels
+			pilot1.shield -= 100					# reduce the shield, lives will be dependent on this value
+			if pilot1.shield == 0:
+				lives = lives - 1
+				pilot1.shield = 200
+			if lives == 0:
+				gameState = "over"
+			explshow = explosion(col.rect.center, 'big')		# bigger faster enemies = more shield dmg
 			all_sprites.add(explshow)
 			explsnd1.play()
 			e = enemy()
 			all_sprites.add(e)
 			enemies.add(e)
-			lives = lives - 1
-			print(lives)
-			if lives == 0:		#make game over menu/screen here
-				gameState = "over"
 
 		screen.fill(BLACK)
 		screen.blit(background, background_rect)
 		all_sprites.draw(screen)
 		show_hud(screen, "SCORE: " + str(score) + "    LIVES: " + str(lives), 28, WIDTH/4, 8 )		# blits all sprites onto screen
+		showshield(screen, 380, 10, pilot1.shield)
 		pygame.display.flip()
 
 		#screen.fill(BLACK)
