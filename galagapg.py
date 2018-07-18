@@ -32,6 +32,9 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("THIS IS NOT GALAGA")
 clock = pygame.time.Clock()
 
+fireratelevel = 3						#THIS HAD TO BE MOVED TO THE TOP AWAY FROM THE OTHER VARIABLES THAT CAN BE UPGRADED
+
+
 def showshield(surf, x, y, amount):
 	if amount < 0:
 		amount = 0
@@ -99,8 +102,13 @@ class pilot(pygame.sprite.Sprite):
 		self.radius = 25							# half of the image width
 		self.rect.centerx = WIDTH / 2
 		self.rect.bottom = HEIGHT - 10
-		self.speedx = 0					# can adjust delay with upgrades, smaller delay faster weapon shoots
-		self.delay = 250
+		#self.speedx = 0					# can adjust delay with upgrades, smaller delay THE faster weapon shoots
+		if fireratelevel == 1:					# FIRERATE LEVEL WAS TESTED AND IT WORKS FINE
+			self.delay = 500
+		if fireratelevel == 2:
+			self.delay = 300
+		if fireratelevel == 3:
+			self.delay = 150
 		self.last_shot = pygame.time.get_ticks()
 		self.shield = 200
 
@@ -108,9 +116,30 @@ class pilot(pygame.sprite.Sprite):
 		now = pygame.time.get_ticks()
 		if now - self.last_shot > self.delay:
 			self.last_shot = now
-			missle = Missle(self.rect.centerx, self.rect.top) 			# center bullet over pilot put on top of pilot
-			all_sprites.add(missle)
-			missles.add(missle)
+
+			if misslelevel == 1:								# MISSLE LEVEL WAS TESTED AND IT WORKS FINE
+				missle = Missle(self.rect.centerx, self.rect.top) 			# center bullet over pilot put on top of pilot
+				all_sprites.add(missle)
+				missles.add(missle)
+													# creating two buttlets for lvl 2 upgrade
+			if misslelevel == 2:								# add another parameter to the fire function for the level of upgrade the pilot has purchased
+				missle2a = Missle(self.rect.centerx - 10, self.rect.top)
+				missle2b = Missle(self.rect.centerx + 10, self.rect.top)
+				all_sprites.add(missle2a)
+				all_sprites.add(missle2b)
+				missles.add(missle2a)
+				missles.add(missle2b)
+
+			if misslelevel == 3:								# creating three bullets for lvl 3 upgrade
+				missle3a = Missle(self.rect.centerx - 15, self.rect.top)
+				missle3b = Missle(self.rect.centerx, self.rect.top)
+				missle3c = Missle(self.rect.centerx + 15, self.rect.top)
+				all_sprites.add(missle3a)
+				all_sprites.add(missle3b)
+				all_sprites.add(missle3c)
+				missles.add(missle3a)
+				missles.add(missle3b)
+				missles.add(missle3c)
 			bulletsnd1.play()
 
 	def update(self):
@@ -118,13 +147,33 @@ class pilot(pygame.sprite.Sprite):
 		self.speedy = 0
 		keystate = pygame.key.get_pressed()					# can only used key presses
 		if keystate[pygame.K_LEFT] or keystate[pygame.K_a] or keystate[pygame.K_KP4]:
-			self.speedx = -5
+			if speedlevel == 1:						# SPEED LEVEL WAS TESTED AND IT WORKS FINE
+				self.speedx = -5
+			if speedlevel == 2:
+				self.speedx = -10
+			if speedlevel == 3:
+				self.speedx = -15
 		if keystate[pygame.K_RIGHT] or keystate[pygame.K_d] or keystate[pygame.K_KP6]:
-			self.speedx = 5
+			if speedlevel == 1:
+				self.speedx = 5
+			if speedlevel == 2:
+				self.speedx = 10
+			if speedlevel == 3:
+				self.speedx = 15
 		if keystate[pygame.K_UP] or keystate[pygame.K_w] or keystate[pygame.K_KP8]:
-			self.speedy = -5
+			if speedlevel == 1:
+				self.speedy = -5
+			if speedlevel == 2:
+				self.speedy = -10
+			if speedlevel == 3:
+				self.speedy = -15
 		if keystate[pygame.K_DOWN] or keystate[pygame.K_s] or keystate[pygame.K_KP5]:
-			self.speedy = 5
+			if speedlevel == 1:
+				self.speedy = 5
+			if speedlevel == 2:
+				self.speedy = 10
+			if speedlevel == 3:
+				self.speedy = 15
 		if keystate[pygame.K_SPACE]:
 			self.fire()
 		self.rect.x += self.speedx
@@ -141,14 +190,14 @@ class pilot(pygame.sprite.Sprite):
 class enemy(pygame.sprite.Sprite):							# basic enemy ship class
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.transform.scale(enemypic, (30,30))
+		self.image = pygame.transform.scale(enemypic, (40,40))
 		self.image.set_colorkey(BLACK)
 		self.rect = self.image.get_rect()							# half of image width
 		self.radius = int(self.rect.width * .85 / 2)
 		self.rect.x = random.randrange(WIDTH - self.rect.width)
 		self.rect.y = random.randrange(-100,-40)
-		self.speedy = random.randrange(1,10)
-		self.speedx = random.randrange(-5,5)
+		self.speedy = random.randrange(5,20)
+		self.speedx = random.randrange(-10,10)
 	def update(self):								# update on each frame
 		self.rect.x += self.speedx
 		self.rect.y += self.speedy
@@ -227,9 +276,13 @@ for i in range(5):								# adding random blocks for enemies
 	e = enemy()
 	all_sprites.add(e)
 	enemies.add(e)
-											# these should probably become instance variables of the pilot class
-lives = 3										# create get and set functions for these instance variables later
-score = 0										#MAIN LOOP FOR THE GAME
+
+#fireratelevel = 1	moved to top of file could not be seen by pilot constructor.  determines how quickly the pilot can fire used in pilot class, all of these variables manipulate values in pilot class
+misslelevel = 2						# level of missle upgrades one is base level determines number of rockets to shoot
+shieldlevel = 3						# level of shield upgrades 1 are base shields, as we upgrade we take less dmg from hits as handled below in COLLISIONS SECTION
+speedlevel = 3						# these should probably become instance variables of the pilot class, base level for speed of pilot
+lives = 3						# create get and set functions for these instance variables later
+score = 0						# for MAIN LOOP FOR THE GAME
 run = True
 
 posChecker = 1
@@ -243,7 +296,8 @@ while run:
 		screen.blit(background, background_rect)
 		show_hud(screen, "GAME OVER!", 64, WIDTH / 2, HEIGHT /4)
 		show_hud(screen, "Score: " + str(score), 64, WIDTH / 2, HEIGHT / 2)
-		show_hud(screen, "Press Enter Key to Restart", 58 , WIDTH / 2, HEIGHT * 3 / 4)
+		show_hud(screen, "Press Enter Key to Restart", 58 , WIDTH / 2, HEIGHT * 3/4)
+		show_hud(screen,"Press Esc to Exit", 40, WIDTH / 2, HEIGHT * 7/8)
 		pygame.display.flip()
 		waiting = True
 		while waiting:
@@ -267,6 +321,8 @@ while run:
 						lives = 3
 						score = 0
 						waiting = False
+					if keystate[pygame.K_ESCAPE]:
+						pygame.quit()
 
 		screen.fill(BLACK)
 		screen.blit(background, background_rect)
@@ -297,8 +353,13 @@ while run:
 		collisions = pygame.sprite.spritecollide(pilot1, enemies, True, pygame.sprite.collide_circle)				# see if enemy ran into the pilot
 		for col in collisions:
 			#pilot1.shield -= hit.radius * 2			# this could work if we make bigger enemies for harder levels
-			pilot1.shield -= 100					# reduce the shield, lives will be dependent on this value
-			if pilot1.shield == 0:
+			if shieldlevel == 1:
+				pilot1.shield -= 100					# reduce the shield, lives will be dependent on this value, 2 hits = 1 live here
+			if shieldlevel == 2:
+				pilot1.shield -= 70					# 3 hits equal 1 live
+			if shieldlevel ==3:
+				pilot1.shield -= 60					# tank 4 hits before live is taken
+			if pilot1.shield <= 0:
 				lives = lives - 1
 				pilot1.shield = 200
 			if lives == 0:
@@ -321,7 +382,7 @@ while run:
 		#screen.blit(background, background_rect)
 		#all_sprites.draw(screen)									# blits all sprites onto screen
 		#pygame.display.flip()
-	if(gameState == "pause"):		#check for events and positions
+	if(gameState == "pause"):										#check for events and positions
 		resumePos = pause_rec.y + pause_rec.height/2
 		quitPos = pause_rec.y + pause_rec.height/2 + pause_rec.height/7
 		#########################
