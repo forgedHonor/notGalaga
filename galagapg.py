@@ -1,5 +1,5 @@
 # for the music that plays in background
-#License: BipCot NoGov http://bipcot.org or CC-BY 3.0 https://creativecommons.org/licenses/by/3.0/
+# License: BipCot NoGov http://bipcot.org or CC-BY 3.0 https://creativecommons.org/licenses/by/3.0/
 # lasers and explosions sounds from  bfxr.net
 # ships from Skorpio at opengameart.org
 # explosion animation from WrathGames Studio [http://wrathgames.com/blog]
@@ -14,8 +14,8 @@ from os import path
 imgdir = path.join(path.dirname(__file__),'images')					# imgdir is the directory that contains the images, contains several images many unused for now
 sounddir = path.join(path.dirname(__file__),'thenoise')
 
-WIDTH = 600										# DIMENSIONS OF THE GAME
-HEIGHT = 800
+WIDTH = 800										# DIMENSIONS OF THE GAME
+HEIGHT = 900
 FPS = 60										# CHANGE BETWEEN 30 AND 60
 
 											# colors are...
@@ -33,7 +33,7 @@ pygame.display.set_caption("THIS IS NOT GALAGA")
 clock = pygame.time.Clock()
 
 fireratelevel = 3						#THIS HAD TO BE MOVED TO THE TOP AWAY FROM THE OTHER VARIABLES THAT CAN BE UPGRADED
-
+gamelevel = 1							# overall level of the game
 
 def showshield(surf, x, y, amount):
 	if amount < 0:
@@ -81,8 +81,23 @@ class explosion(pygame.sprite.Sprite):
 class Missle(pygame.sprite.Sprite):							# base class for pilots weapon
 	def __init__(self, x, y):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.transform.scale(misslepic,(40,40))
-		self.image = pygame.transform.rotate(misslepic,0)
+
+		if misslelevel == 1:
+			self.image = pygame.transform.scale(misslepic,(40,40))
+			self.image = pygame.transform.rotate(misslepic,0)
+
+		if misslelevel == 2:
+			self.image = pygame.transform.scale(misslepic2,(40,40))
+			self.image = pygame.transform.rotate(misslepic2,0)
+
+		if misslelevel == 3:
+			self.image = pygame.transform.scale(misslepic3,(30,30))
+			self.image = pygame.transform.rotate(misslepic3,0)
+
+		if misslelevel == 4:
+			self.image = pygame.transform.scale(misslepic4,(40,40))
+			self.image = pygame.transform.rotate(misslepic4,0)
+
 		self.image.set_colorkey(BLACK)						# clearing the background of the image
 		self.rect = self.image.get_rect()
 		self.rect.bottom = y
@@ -131,15 +146,16 @@ class pilot(pygame.sprite.Sprite):
 				missles.add(missle2b)
 
 			if misslelevel == 3:								# creating three bullets for lvl 3 upgrade
-				missle3a = Missle(self.rect.centerx - 15, self.rect.top)
+				missle3a = Missle(self.rect.centerx - 20, self.rect.top)
 				missle3b = Missle(self.rect.centerx, self.rect.top)
-				missle3c = Missle(self.rect.centerx + 15, self.rect.top)
+				missle3c = Missle(self.rect.centerx + 20, self.rect.top)
 				all_sprites.add(missle3a)
 				all_sprites.add(missle3b)
 				all_sprites.add(missle3c)
 				missles.add(missle3a)
 				missles.add(missle3b)
 				missles.add(missle3c)
+
 			bulletsnd1.play()
 
 	def update(self):
@@ -190,21 +206,40 @@ class pilot(pygame.sprite.Sprite):
 class enemy(pygame.sprite.Sprite):							# basic enemy ship class
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.transform.scale(enemypic, (40,40))
-		self.image.set_colorkey(BLACK)
+
+		if gamelevel == 1:
+			self.image = pygame.transform.scale(enemypic,(50,50))
+			self.image.set_colorkey(BLACK)
+
+		if gamelevel == 2:
+			self.image = pygame.transform.scale(enemypic2,(60,60))
+			self.image.set_colorkey(BLACK)
+
+		if gamelevel == 3:
+			self.image = pygame.transform.scale(enemypic3,(70,70))
+			self.image.set_colorkey(BLACK)
+
+		if gamelevel == 4:
+			self.image = pygame.transform.scale(enemypic4,(80,80))
+			self.image.set_colorkey(BLACK)
+
+		if gamelevel == 5:
+			self.image = pygame.transform.scale(enemypic5,(90,90))
+			self.image.set_colorkey(BLACK)
+
 		self.rect = self.image.get_rect()							# half of image width
 		self.radius = int(self.rect.width * .85 / 2)
-		self.rect.x = random.randrange(WIDTH - self.rect.width)
+		self.rect.x = random.randrange(0 + self.rect.width  , WIDTH - self.rect.width )
 		self.rect.y = random.randrange(-100,-40)
-		self.speedy = random.randrange(5,20)
-		self.speedx = random.randrange(-10,10)
+		self.speedy = random.randrange(10,20)
+		self.speedx = random.randrange(-1,1)
 	def update(self):								# update on each frame
 		self.rect.x += self.speedx
 		self.rect.y += self.speedy
 		if self.rect.top > HEIGHT + 10 or self.rect.left < -30 or self.rect.right > WIDTH + 30:
-			self.rect.x = random.randrange(WIDTH - self.rect.width)
+			self.rect.x = random.randrange(0 + self.rect.width * 2 , WIDTH - self.rect.width * 2)
 			self.rect.y = random.randrange(-100,-40)
-			self.speedy = random.randrange(1,10)
+			self.speedy = random.randrange(10,20)
 
 										# images
 										#class for the selector in menus(IN ALL MENUS MAKE SURE TO RUN UPDATE TO ENSURE THE SELECTOR RESPONDS TO ARROW KEYS)
@@ -222,9 +257,20 @@ class selector(pygame.sprite.Sprite):
 
 background = pygame.image.load(path.join(imgdir, "space.png")).convert()
 background_rect = background.get_rect()
+
 pilotpic = pygame.image.load(path.join(imgdir, "alienship.png")).convert()
+
 enemypic = pygame.image.load(path.join(imgdir, "enemy2.png")).convert()
+enemypic2 = pygame.image.load(path.join(imgdir, "lvl2enemy.png")).convert()
+enemypic3 = pygame.image.load(path.join(imgdir, "lvl3enemy.png")).convert()
+enemypic4 = pygame.image.load(path.join(imgdir, "lvl4enemy.png")).convert()
+enemypic5 = pygame.image.load(path.join(imgdir, "lvl5enemy.png")).convert()
+
 misslepic = pygame.image.load(path.join(imgdir, "rocket3.png")).convert()
+misslepic2 = pygame.image.load(path.join(imgdir, "lvl2missle.png")).convert()
+misslepic3 = pygame.image.load(path.join(imgdir, "lvl3missle.png")).convert()
+misslepic4 = pygame.image.load(path.join(imgdir, "lvl4missle.png")).convert()
+
 pausePic = pygame.image.load(path.join(imgdir, "pauseMenu.png")).convert()
 														#pause rec details
 pause_rec = pausePic.get_rect()						#gets a rectangle to draw pause menu onto based off of size of pic
@@ -238,8 +284,8 @@ selectorPauseImage = pygame.transform.scale(selectorPic, (20,20))
 										#self.image.set_colorkey(WHITE)########come back to this, can't get background to go away
 selectrect = selectorPauseImage.get_rect()
 selectrect.x = pause_rec.x + pause_rec.width/4
-selectrect.y = pause_rec.y + pause_rec.height/2	#initialize over the resume
-						#selector for main menu	##??
+selectrect.y = pause_rec.y + pause_rec.height/2					#initialize over the resume
+										#selector for main menu	##??
 #selector for main menu
 selectorMainImage = pygame.transform.scale(selectorPic, (30, 30))
 selectorMainImage.fill(GREEN)
@@ -277,13 +323,16 @@ for i in range(5):								# adding random blocks for enemies
 	all_sprites.add(e)
 	enemies.add(e)
 
-#fireratelevel = 1	moved to top of file could not be seen by pilot constructor.  determines how quickly the pilot can fire used in pilot class, all of these variables manipulate values in pilot class
-misslelevel = 2						# level of missle upgrades one is base level determines number of rockets to shoot
-shieldlevel = 3						# level of shield upgrades 1 are base shields, as we upgrade we take less dmg from hits as handled below in COLLISIONS SECTION
-speedlevel = 3						# these should probably become instance variables of the pilot class, base level for speed of pilot
+
+#fireratelevel = 1					moved to top of file could not be seen by pilot constructor.  determines how quickly the pilot can fire used in pilot class, all of these variables manipulate values in pilot class
+misslelevel = 3						# level of missle upgrades one is base level determines number of rockets to shoot
+shieldlevel = 1						# level of shield upgrades 1 are base shields, as we upgrade we take less dmg from hits as handled below in COLLISIONS SECTION
+speedlevel = 1						# these should probably become instance variables of the pilot class, base level for speed of pilot
 lives = 3						# create get and set functions for these instance variables later
+cash = 0						# maybe amount of money the character has to buy upgrades
 score = 0						# for MAIN LOOP FOR THE GAME
 run = True
+
 
 posChecker = 1
 pygame.mixer.music.play(loops = -1)
@@ -293,9 +342,20 @@ gameState = "play"
 while run:
 	clock.tick(FPS)
 	if (gameState == "over"):
+
+		speedlevel = 1				#resetting the game , ship, score, and cash once the game is over
+		misslelevel = 1
+		fireratelevel = 1
+		gamelevel = 1
+		shieldlevel = 1
+		cash = 0
+		#score = 0				# moved this down like 10 lines so proper score showed
+		lives = 3
+
 		screen.blit(background, background_rect)
 		show_hud(screen, "GAME OVER!", 64, WIDTH / 2, HEIGHT /4)
 		show_hud(screen, "Score: " + str(score), 64, WIDTH / 2, HEIGHT / 2)
+		score = 0
 		show_hud(screen, "Press Enter Key to Restart", 58 , WIDTH / 2, HEIGHT * 3/4)
 		show_hud(screen,"Press Esc to Exit", 40, WIDTH / 2, HEIGHT * 7/8)
 		pygame.display.flip()
@@ -331,7 +391,7 @@ while run:
 		pygame.display.flip()
 		gameState = "play"
 
-	if(gameState == "play"):			#game state is play
+	if(gameState == "play"):													#game state is play
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
@@ -345,26 +405,49 @@ while run:
 			explsnd1.play()
 			explshow = explosion(col.rect.center, 'big')									# did a missle hit an enemy
 			all_sprites.add(explshow)											# could have multiple of these functions for each enemy
-			score += 100
+			#score += 100
+			if score >= 1000 and score < 2000:
+				gamelevel = 2
+			if score >= 2000 and score < 3000:
+				gamelevel = 3
+			if score >= 3000 and score < 4000:
+				gamelevel = 4
+			if score >= 4000:
+				gamelevel = 5
+			if gamelevel == 1:
+				score += 100
+				cash += 100
+			if gamelevel == 2:
+				score += 200
+				cash += 200
+			if gamelevel == 3:
+				score += 300
+				cash += 300
+			if gamelevel == 4:
+				score += 400
+				cash += 400
+			if gamelevel == 5:
+				score += 500
+				cash += 500
 			e = enemy()
 			all_sprites.add(e)
 			enemies.add(e)
 
-		collisions = pygame.sprite.spritecollide(pilot1, enemies, True, pygame.sprite.collide_circle)				# see if enemy ran into the pilot
+		collisions = pygame.sprite.spritecollide(pilot1, enemies, True, pygame.sprite.collide_circle)	# see if enemy ran into the pilot
 		for col in collisions:
-			#pilot1.shield -= hit.radius * 2			# this could work if we make bigger enemies for harder levels
+														# this could work if we make bigger enemies for harder levels
 			if shieldlevel == 1:
-				pilot1.shield -= 100					# reduce the shield, lives will be dependent on this value, 2 hits = 1 live here
+				pilot1.shield -= col.radius * 5	* 1						# reduce the shield, lives will be dependent on this value, 2 hits = 1 live here
 			if shieldlevel == 2:
-				pilot1.shield -= 70					# 3 hits equal 1 live
+				pilot1.shield -= col.radius * 5 * 0.70						# 3 hits equal 1 live
 			if shieldlevel ==3:
-				pilot1.shield -= 60					# tank 4 hits before live is taken
+				pilot1.shield -= col.radius * 5 * 0.50						# tank 4 hits before live is taken
 			if pilot1.shield <= 0:
 				lives = lives - 1
 				pilot1.shield = 200
 			if lives == 0:
 				gameState = "over"
-			explshow = explosion(col.rect.center, 'big')		# bigger faster enemies = more shield dmg
+			explshow = explosion(col.rect.center, 'big')						# bigger faster enemies = more shield dmg
 			all_sprites.add(explshow)
 			explsnd1.play()
 			e = enemy()
@@ -453,7 +536,6 @@ while run:
 		screen.blit(selectorMainImage,selectMainRect)
 		pygame.display.flip()
 
-					# exit game and window
 	#screen.fill(BLACK)
 	#screen.blit(background, background_rect)
 	#all_sprites.draw(screen)
