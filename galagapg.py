@@ -25,8 +25,8 @@ RED = (255,0,0)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 
-pygame.mixer.pre_init(22100, -16, 1, 4)											# USUAL PYGAME COMMANDS TO START THE WINDOW AND GAME
-pygame.mixer.init(22100,-16,1,4)
+##################################################pygame.mixer.pre_init(22100, -16, 1, 4)											# USUAL PYGAME COMMANDS TO START THE WINDOW AND GAME
+###############################################pygame.mixer.init(22100,-16,1,4)
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("THIS IS NOT GALAGA")
@@ -291,8 +291,8 @@ selectorMainImage = pygame.transform.scale(selectorPic, (30, 30))
 selectorMainImage.fill(GREEN)
 selectMainRect = selectorMainImage.get_rect()
 #init main selector next to commence    go back and change these to relative coordiantes
-selectMainRect.x = selectMainRect.x + 275
-selectMainRect.y = selectMainRect.y + 125
+selectMainRect.x = 275
+selectMainRect.y = 125
 
 #positions on main menu
 
@@ -337,8 +337,8 @@ run = True
 posChecker = 1
 pygame.mixer.music.play(loops = -1)
 pygame.mixer.music.set_volume(10.0)
-gameState = "play"
-#gameState = "Main Menu"
+#gameState = "play"
+gameState = "Main Menu"
 while run:
 	clock.tick(FPS)
 	if (gameState == "over"):
@@ -391,11 +391,13 @@ while run:
 		pygame.display.flip()
 		gameState = "play"
 
-	if(gameState == "play"):													#game state is play
+	if(gameState == "play"):	
+		#print("Game state play")												#game state is play
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
 			elif event.type == pygame.KEYDOWN:
+		#		print("key pressed")
 				if event.key == pygame.K_p:  										#checks for pause button to be pressed
 					gameState = "pause"
 		all_sprites.update()													# update all the sprites
@@ -484,7 +486,7 @@ while run:
 				elif event.key == pygame.K_RETURN:		# WAS RETURN
 					print(posChecker)
 					if(posChecker == 0):
-						run = False
+						gameState = "Main Menu"
 					elif(posChecker == 1):
 						gameState = "play"
 		#draw menu
@@ -504,9 +506,9 @@ while run:
 		if(screen.get_rect().width != mainRect.width):
 			screen = pygame.display.set_mode((mainRect.width, mainRect.height))
 		#positions for selector
-		commencePos = selectMainRect.y + 125
-		upgradesPos = selectMainRect.y + 150
-		settingsPos = selectMainRect.y + 175
+		commencePos = 125
+		upgradesPos = 200
+		settingsPos = 275
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				print("Quiting...")
@@ -520,14 +522,31 @@ while run:
 				#gameState = "play"
 				run = False
 			elif event.type == pygame.KEYDOWN:
+			#	print("Key pressed")
+			#	print(commencePos)
+			#	print(selectMainRect.y)
 				if event.key == pygame.K_UP:
 					if(selectMainRect.y == upgradesPos):
 						selectMainRect.y = commencePos
 					elif(selectMainRect.y == settingsPos):
 						selectMainRect.y = upgradesPos
 				elif event.key == pygame.K_DOWN:
+					#print("Key down pressed..")
 					if(selectMainRect.y == commencePos):
-						selectMainRect.y = upgrades.pos
+						selectMainRect.y = upgradesPos
+			#			print("Shoudl be on upgrades")
+					elif(selectMainRect.y == upgradesPos):
+						selectMainRect.y = settingsPos
+				elif event.key == pygame.K_RETURN:
+					if(selectMainRect.y == commencePos):
+						gameState = "play"
+						screen = pygame.display.set_mode((WIDTH, HEIGHT))
+						#gameState = "play"
+					elif(selectMainRect.y == upgradesPos):
+						gameState = "upgrade"
+					elif(selectMainRect.y == settingsPos):
+						gameState = "settings"
+					
 		#Selector for main menu
 		#draw the menu
 		screen.fill(BLACK)
