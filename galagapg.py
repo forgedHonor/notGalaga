@@ -15,7 +15,7 @@ imgdir = path.join(path.dirname(__file__),'images')					# imgdir is the director
 sounddir = path.join(path.dirname(__file__),'thenoise')
 
 WIDTH = 800										# DIMENSIONS OF THE GAME
-HEIGHT = 900
+HEIGHT = 700
 FPS = 60										# CHANGE BETWEEN 30 AND 60
 
 											# colors are...
@@ -198,8 +198,8 @@ class pilot(pygame.sprite.Sprite):
 			self.rect.right = WIDTH
 		if self.rect.left < 0:
 			self.rect.left = 0
-		if self.rect.bottom > 800:
-			self.rect.bottom = 800
+		if self.rect.bottom > HEIGHT:
+			self.rect.bottom = HEIGHT
 		if self.rect.top < 0:
 			self.rect.top = 0
 
