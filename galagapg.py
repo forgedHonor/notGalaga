@@ -610,8 +610,8 @@ while run:
 						#gameState = "play"
 					elif(selectMainRect.y == upgradesPos):
 						gameState = "upgrade"
-					elif(selectMainRect.y == settingsPos):
 						screen = pygame.display.set_mode((WIDTH, HEIGHT))
+					elif(selectMainRect.y == settingsPos):
 						gameState = "settings"
 		#Selector for main menu
 		#draw the menu
