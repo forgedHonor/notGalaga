@@ -25,8 +25,8 @@ RED = (255,0,0)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 
-##################################################pygame.mixer.pre_init(22100, -16, 1, 4)											# USUAL PYGAME COMMANDS TO START THE WINDOW AND GAME
-###############################################pygame.mixer.init(22100,-16,1,4)
+pygame.mixer.pre_init(22100, -16, 1, 4)											# USUAL PYGAME COMMANDS TO START THE WINDOW AND GAME
+pygame.mixer.init(22100,-16,1,4)
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("THIS IS NOT GALAGA")
@@ -546,7 +546,6 @@ while run:
 						gameState = "upgrade"
 					elif(selectMainRect.y == settingsPos):
 						gameState = "settings"
-					
 		#Selector for main menu
 		#draw the menu
 		screen.fill(BLACK)
