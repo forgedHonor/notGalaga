@@ -337,9 +337,7 @@ run = True
 posChecker = 1
 pygame.mixer.music.play(loops = -1)
 pygame.mixer.music.set_volume(10.0)
-<<<<<<< HEAD
 gameState = "upgrade"
-#gameState = "Main Menu"
 while run:
 	clock.tick(FPS)
 	if (gameState == "upgrade"):
