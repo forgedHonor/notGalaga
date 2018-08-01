@@ -329,7 +329,7 @@ misslelevel = 3						# level of missle upgrades one is base level determines num
 shieldlevel = 1						# level of shield upgrades 1 are base shields, as we upgrade we take less dmg from hits as handled below in COLLISIONS SECTION
 speedlevel = 1						# these should probably become instance variables of the pilot class, base level for speed of pilot
 lives = 3						# create get and set functions for these instance variables later
-cash = 0						# maybe amount of money the character has to buy upgrades
+							# maybe amount of money the character has to buy upgrades
 score = 0						# for MAIN LOOP FOR THE GAME
 run = True
 
@@ -337,10 +337,43 @@ run = True
 posChecker = 1
 pygame.mixer.music.play(loops = -1)
 pygame.mixer.music.set_volume(10.0)
-gameState = "play"
+gameState = "upgrade"
 #gameState = "Main Menu"
 while run:
 	clock.tick(FPS)
+	if (gameState == "upgrade"):
+		screen.blit(background, background_rect)
+		show_hud(screen, "SELECT AN UPGRADE", 64, WIDTH / 2, HEIGHT /4)
+		show_hud(screen, "LVL 2 FIRE RATE ", 32, WIDTH / 6, HEIGHT / 2)
+		show_hud(screen, "LVL 3 FIRE RATE ", 32, WIDTH / 6, HEIGHT / 1.8)
+		show_hud(screen, "LVL 2 Missles ", 32, WIDTH / 6, HEIGHT - 200)
+		show_hud(screen, "LVL 3 Missles ", 32, WIDTH / 6, HEIGHT - 170)
+		show_hud(screen, "LVL 2 MOVE SPEED ", 32, WIDTH -150, HEIGHT - 200)
+		show_hud(screen, "LVL 3 MOVE SPEED ", 32, WIDTH -150, HEIGHT - 170)
+		show_hud(screen, "LVL 2 SHIELDS ", 32, WIDTH -150, HEIGHT / 2)
+		show_hud(screen, "LVL 3 SHIELDS ", 32, WIDTH - 150, HEIGHT / 1.8)
+		#show_hud(screen, "Press Enter Key to PLAY!", 58 , WIDTH / 2, HEIGHT * 3/4)
+		#show_hud(screen,"Press Esc to RESUME", 40, WIDTH / 2, HEIGHT * 7/8)
+		pygame.display.flip()
+		waiting = True
+		while waiting:
+			clock.tick(FPS)
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					pygame.quit()
+				if event.type == pygame.KEYDOWN:
+					keystate = pygame.key.get_pressed()
+					if keystate[pygame.K_RETURN]:
+						gameState = "play"
+					if keystate[pygame.K_ESCAPE]:
+						gameState = "play"
+						waiting = False
+
+		screen.fill(BLACK)
+		screen.blit(background, background_rect)
+		all_sprites.draw(screen)
+		gameState = "play"
+
 	if (gameState == "over"):
 
 		speedlevel = 1				#resetting the game , ship, score, and cash once the game is over
@@ -348,8 +381,7 @@ while run:
 		fireratelevel = 1
 		gamelevel = 1
 		shieldlevel = 1
-		cash = 0
-		#score = 0				# moved this down like 10 lines so proper score showed
+		score = 0				# moved this down like 10 lines so proper score showed
 		lives = 3
 
 		screen.blit(background, background_rect)
@@ -416,19 +448,14 @@ while run:
 				gamelevel = 5
 			if gamelevel == 1:
 				score += 100
-				cash += 100
 			if gamelevel == 2:
 				score += 200
-				cash += 200
 			if gamelevel == 3:
 				score += 300
-				cash += 300
 			if gamelevel == 4:
 				score += 400
-				cash += 400
 			if gamelevel == 5:
 				score += 500
-				cash += 500
 			e = enemy()
 			all_sprites.add(e)
 			enemies.add(e)
