@@ -25,14 +25,14 @@ RED = (255,0,0)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 
-##################################################pygame.mixer.pre_init(22100, -16, 1, 4)											# USUAL PYGAME COMMANDS TO START THE WINDOW AND GAME
-###############################################pygame.mixer.init(22100,-16,1,4)
+pygame.mixer.pre_init(22100, -16, 1, 4)											# USUAL PYGAME COMMANDS TO START THE WINDOW AND GAME
+pygame.mixer.init(22100,-16,1,4)
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("THIS IS NOT GALAGA")
 clock = pygame.time.Clock()
 
-fireratelevel = 3						#THIS HAD TO BE MOVED TO THE TOP AWAY FROM THE OTHER VARIABLES THAT CAN BE UPGRADED
+fireratelevel = 1						#THIS HAD TO BE MOVED TO THE TOP AWAY FROM THE OTHER VARIABLES THAT CAN BE UPGRADED
 gamelevel = 1							# overall level of the game
 
 def showshield(surf, x, y, amount):
@@ -53,6 +53,22 @@ def show_hud(psurf, text, size, x, y):
 	fontrect = surface.get_rect()
 	fontrect.midtop = (x,y)
 	psurf.blit(surface,fontrect)
+
+
+def showupgrade():
+		screen.blit(background, background_rect)
+		show_hud(screen, "SELECT AN UPGRADE", 64, WIDTH / 2, HEIGHT /4)
+		show_hud(screen, "Current Cash:  " + str(score), 64, WIDTH / 2, 250)
+		show_hud(screen, "LVL 2 FIRE RATE(a)", 32, WIDTH / 6, HEIGHT / 2)
+		show_hud(screen, "LVL 3 FIRE RATE(b)", 32, WIDTH / 6, HEIGHT / 1.8)
+		show_hud(screen, "LVL 2 Missles(c)", 32, WIDTH / 6, HEIGHT - 200)
+		show_hud(screen, "LVL 3 Missles(d)", 32, WIDTH / 6, HEIGHT - 170)
+		show_hud(screen, "LVL 2 MOVE SPEED(e)", 32, WIDTH -150, HEIGHT - 200)
+		show_hud(screen, "LVL 3 MOVE SPEED(f)", 32, WIDTH -150, HEIGHT - 170)
+		show_hud(screen, "LVL 2 SHIELDS(g)", 32, WIDTH -150, HEIGHT / 2)
+		show_hud(screen, "LVL 3 SHIELDS(h)", 32, WIDTH - 150, HEIGHT / 1.8)
+		show_hud(screen, "Press Enter Key to PLAY!", 58 , WIDTH / 2, HEIGHT * 5/6)
+		pygame.display.flip()
 
 class explosion(pygame.sprite.Sprite):
 	def __init__(self,center,size):
@@ -325,7 +341,7 @@ for i in range(5):								# adding random blocks for enemies
 
 
 #fireratelevel = 1					moved to top of file could not be seen by pilot constructor.  determines how quickly the pilot can fire used in pilot class, all of these variables manipulate values in pilot class
-misslelevel = 3						# level of missle upgrades one is base level determines number of rockets to shoot
+misslelevel = 1						# level of missle upgrades one is base level determines number of rockets to shoot
 shieldlevel = 1						# level of shield upgrades 1 are base shields, as we upgrade we take less dmg from hits as handled below in COLLISIONS SECTION
 speedlevel = 1						# these should probably become instance variables of the pilot class, base level for speed of pilot
 lives = 3						# create get and set functions for these instance variables later
@@ -341,21 +357,10 @@ gameState = "upgrade"
 while run:
 	clock.tick(FPS)
 	if (gameState == "upgrade"):
-		screen.blit(background, background_rect)
-		show_hud(screen, "SELECT AN UPGRADE", 64, WIDTH / 2, HEIGHT /4)
-		show_hud(screen, "LVL 2 FIRE RATE ", 32, WIDTH / 6, HEIGHT / 2)
-		show_hud(screen, "LVL 3 FIRE RATE ", 32, WIDTH / 6, HEIGHT / 1.8)
-		show_hud(screen, "LVL 2 Missles ", 32, WIDTH / 6, HEIGHT - 200)
-		show_hud(screen, "LVL 3 Missles ", 32, WIDTH / 6, HEIGHT - 170)
-		show_hud(screen, "LVL 2 MOVE SPEED ", 32, WIDTH -150, HEIGHT - 200)
-		show_hud(screen, "LVL 3 MOVE SPEED ", 32, WIDTH -150, HEIGHT - 170)
-		show_hud(screen, "LVL 2 SHIELDS ", 32, WIDTH -150, HEIGHT / 2)
-		show_hud(screen, "LVL 3 SHIELDS ", 32, WIDTH - 150, HEIGHT / 1.8)
-		#show_hud(screen, "Press Enter Key to PLAY!", 58 , WIDTH / 2, HEIGHT * 3/4)
-		#show_hud(screen,"Press Esc to RESUME", 40, WIDTH / 2, HEIGHT * 7/8)
+		showupgrade()
 		pygame.display.flip()
 		waiting = True
-		while waiting:
+		while waiting:								# do keys for purchase here
 			clock.tick(FPS)
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -364,10 +369,42 @@ while run:
 					keystate = pygame.key.get_pressed()
 					if keystate[pygame.K_RETURN]:
 						gameState = "play"
+						waiting = False
 					if keystate[pygame.K_ESCAPE]:
 						gameState = "play"
 						waiting = False
-
+					if keystate[pygame.K_a] and fireratelevel == 1 and score >= 1000:	# only let them get better equipment
+						fireratelevel = 2
+						score = score - 1000
+						showupgrade()
+					if keystate[pygame.K_b] and fireratelevel == 2 and score >= 3000:
+						fireratelevel = 3
+						score = score - 3000
+						showupgrade()
+					if keystate[pygame.K_c] and misslelevel == 1 and score >= 1000:
+						misslelevel = 2
+						score = score - 1000
+						showupgrade()
+					if keystate[pygame.K_d] and misslelevel == 2 and score >= 3000:		# and score above the necessary level
+						misslelevel = 3
+						score = score - 3000
+						showupgrade()
+					if keystate[pygame.K_e] and speedlevel == 1 and score >= 1000:
+						speedlevel = 2
+						score = score - 1000
+						showupgrade()
+					if keystate[pygame.K_f] and speedlevel == 2 and score >= 3000:
+						speedlevel = 3
+						score = score - 3000
+						showupgrade()
+					if keystate[pygame.K_g] and shieldlevel == 1 and score >= 1000:
+						shieldlevel = 2
+						score = score - 1000
+						showupgrade()
+					if keystate[pygame.K_h] and shieldlevel == 2 and score >= 3000:
+						shieldlevel = 3
+						score = score - 3000
+						showupgrade()
 		screen.fill(BLACK)
 		screen.blit(background, background_rect)
 		all_sprites.draw(screen)
@@ -422,15 +459,17 @@ while run:
 		pygame.display.flip()
 		gameState = "play"
 
-	if(gameState == "play"):	
+	if(gameState == "play"):
 		#print("Game state play")												#game state is play
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
 			elif event.type == pygame.KEYDOWN:
-		#		print("key pressed")
+				#print("key pressed")
 				if event.key == pygame.K_p:  										#checks for pause button to be pressed
 					gameState = "pause"
+				if event.key == pygame.K_u:
+					gameState = "upgrade"
 		all_sprites.update()													# update all the sprites
 
 		collisions = pygame.sprite.groupcollide(enemies,missles, True, True) 							# first true to delete enemy second true to delete missle as it has exploded
@@ -572,7 +611,6 @@ while run:
 						gameState = "upgrade"
 					elif(selectMainRect.y == settingsPos):
 						gameState = "settings"
-					
 		#Selector for main menu
 		#draw the menu
 		screen.fill(BLACK)
