@@ -12,4 +12,5 @@ fly in special patters around the screen but ended up making them move in a more
 implemented this with the boss enemy that appears at the end of the game as it does implement a special set of moves. Christian was responsible for designing the
 main menu, and its functionality. Christian also designed the the big bad boss enemy that appears at the end of the game including its special movements and dives. 
 He also designed the collisions	for the boss ship. Christian also worked on the design of the pause menu and its events. Christian also designed the settings page
-that enables saves and loads
+that enables saves and loads. Adam was responsible for creating some of of the images along with implementing the saved/load game functionality and also
+designing the  settings page.

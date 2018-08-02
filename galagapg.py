@@ -28,6 +28,8 @@ WHITE = (255,255,255)
 pygame.mixer.pre_init(22100, -16, 1, 4)											# USUAL PYGAME COMMANDS TO START THE WINDOW AND GAME
 pygame.mixer.init(22100,-16,1,4)
 pygame.init()
+gamesound = True
+soundsound = True
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("THIS IS NOT GALAGA")
 clock = pygame.time.Clock()
@@ -750,11 +752,26 @@ while run:
 				print("Quiting...")
 				run = False
 			elif event.type == pygame.KEYDOWN:
-				if(event.key == pygame.K_S):#sm12
-				elif(event.key == pygame.K_M):
-				elif(event.key == pygame.K_1):
-				elif(event.key == pygame.K_2):
-			
+				if(event.key == pygame.K_m):				#sm12
+					if gamesound == True:
+						pygame.mixer.music.set_volume(0)
+						gamesound = False
+						break
+					if gamesound == False:
+						pygame.mixer.music.set_volume(1)
+						gamesound = True
+				elif(event.key == pygame.K_s):
+					if soundsound == True:
+						pygame.mixer.pause()
+						soundsound = False
+						break
+					if soundsound == False:
+						pygame.mixer.unpause()
+						soundsound = True
+				elif(event.key == pygame.K_q):
+					gameState = "Main Menu"
+				#elif(event.key == pygame.K_1):
+				#elif(event.key == pygame.K_2):
 		settingsRec = settingsPic.get_rect()
 		screen = pygame.display.set_mode((settingsRec.width,settingsRec.height))
 		screen.fill(BLACK)
