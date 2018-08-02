@@ -422,11 +422,11 @@ pilot1 = pilot()
 all_sprites.add(pilot1)
 
 ################3
-#testing purpose only
-bE = bigEnemy()
-all_sprites.add(bE)
+#testing only
+#bE = bigEnemy()
+#all_sprites.add(bE)
 #enemies.add(bE)
-allMothers.add(bE)
+#allMothers.add(bE)
 ################
 for i in range(5):								# adding random blocks for enemies
 	e = enemy()
@@ -595,7 +595,14 @@ while run:
 			e = enemy()
 			all_sprites.add(e)
 			enemies.add(e)
-
+		#check for mother ship spawning
+		if((totalkilled==150) or (totalkilled == 155) or (totalkilled == 160)):
+			totalkilled+=1
+			bE = bigEnemy()
+			all_sprites.add(bE)
+			#enemies.add(bE)
+			allMothers.add(bE)
+			
 		collisions = pygame.sprite.spritecollide(pilot1, enemies, True, pygame.sprite.collide_circle)	# see if enemy ran into the pilot
 		for col in collisions:
 														# this could work if we make bigger enemies for harder levels
