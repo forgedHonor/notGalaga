@@ -1,18 +1,12 @@
-# notGalaga
-Similar to galaga but definitley not
-
-6/15/2018 cgosterer:
-Added the galaga.py file. File must be run with python3 and you must download the 
-used libraries. Better to run in fullscreen mode so you can see entire window better.
-File is based on youtude video series by christian thompson titled "space invaders"
-
-
-6/24/2018 cgosterer:
-Decided turtle probably isnt the best library to use. Pygame is much better and easier
-to learn. Added new files and images directory. Add all images you use to the images directory.
-The game is now in the file called galagapg.py. I found a tutorial on youtube that was helpful.
-A link to the start of the youtube series is https://youtu.be/nGufy7weyGY. I think there is like 10 videos in the series
-It helped in learning pygame and based my code on what I found there. I will continue working with the ships,
-including their movement and collisions. More enemy classes will also be made for levels later on.
-If someone wants to start designing a menu/gui for starting the game, pausing the game and a quit menu or something
-that would help us a lot. Run with python3 galagapg.py, you must install pygame.
+Our project aims to create a basic desktop game that was originally intended to be some what of a clone to the 1980's arcade game named Galaga. The only libraries
+that were used for our project were pygame 1.9.3 sys, os, time, and random. The user starts the game and is greeted with the main menu screen, they then use the 
+arrow keys to select the option they want. Once the player actually enters the game the common methods for player control are used. Arrow keys to move our pilot
+and space bar to fire the pilots weapon. The user can press 'u' for the upgrades menu and then press they key in the parentheses to actually upgrade that part
+of their ship. There are on screen directions to get back to the game from the upgrade screen. The user can also press the 'p' key to bring up the pause menu, the
+pause menu is then navigated through with the arrow keys and the enter button. When strictly comparing our game to Galaga, our game has extra features including, 
+the mentioned upgrades menu, a currency system, a pause menu, and a main menu. Along with one final super massive boss. The separation of work is as follows, Chris 
+Osterer was responsible for building the pilot class and all actions associated with it, firing, moving, and upgrading. Chris also designed the basic 5 levels of
+Enemies that we see as the player progresses through the game. Chris also worked on setting up the initial game window, and designing the upgrade screen. Chris
+also set up the collisions between enemy and pilot, and also the collisions between the missle and the enemy ships. We originally had the idea to have the enemies
+fly in special patters around the screen but ended up making them move in a more linear fashion towards the pilot. We somewhat implemented this with the boss
+enemy that appears at the end of the game as it does implement a special set of moves.

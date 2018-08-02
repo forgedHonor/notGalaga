@@ -1,8 +1,8 @@
-# for the music that plays in background
-# License: BipCot NoGov http://bipcot.org or CC-BY 3.0 https://creativecommons.org/licenses/by/3.0/
-# lasers and explosions sounds from  bfxr.net
-# ships from Skorpio at opengameart.org
-# explosion animation from WrathGames Studio [http://wrathgames.com/blog]
+#for the music that plays in background
+#License: BipCot NoGov http://bipcot.org or CC-BY 3.0 https://creativecommons.org/licenses/by/3.0/
+#lasers and explosions sounds from  bfxr.net
+#ships from Skorpio at opengameart.org
+#explosion animation from WrathGames Studio [http://wrathgames.com/blog]
 
 import sys
 import time
@@ -59,14 +59,14 @@ def showupgrade():
 		screen.blit(background, background_rect)
 		show_hud(screen, "SELECT AN UPGRADE", 64, WIDTH / 2, HEIGHT /4)
 		show_hud(screen, "Current Cash:  " + str(score), 64, WIDTH / 2, 250)
-		show_hud(screen, "LVL 2 FIRE RATE(a)", 32, WIDTH / 6, HEIGHT / 2)
-		show_hud(screen, "LVL 3 FIRE RATE(b)", 32, WIDTH / 6, HEIGHT / 1.8)
-		show_hud(screen, "LVL 2 Missles(c)", 32, WIDTH / 6, HEIGHT - 200)
-		show_hud(screen, "LVL 3 Missles(d)", 32, WIDTH / 6, HEIGHT - 170)
-		show_hud(screen, "LVL 2 MOVE SPEED(e)", 32, WIDTH -150, HEIGHT - 200)
-		show_hud(screen, "LVL 3 MOVE SPEED(f)", 32, WIDTH -150, HEIGHT - 170)
-		show_hud(screen, "LVL 2 SHIELDS(g)", 32, WIDTH -150, HEIGHT / 2)
-		show_hud(screen, "LVL 3 SHIELDS(h)", 32, WIDTH - 150, HEIGHT / 1.8)
+		show_hud(screen, "$1000 LVL 2 FIRE RATE (a)", 32, WIDTH / 5.6, HEIGHT / 2)
+		show_hud(screen, "$3000 LVL 3 FIRE RATE (b)", 32, WIDTH / 5.6, HEIGHT / 1.8)
+		show_hud(screen, "$1000 LVL 2 Missles (c)", 32, WIDTH / 6, HEIGHT - 200)
+		show_hud(screen, "$3000 LVL 3 Missles (d)", 32, WIDTH / 6, HEIGHT - 170)
+		show_hud(screen, "$1000 LVL 2 MOVE SPEED (e)", 32, WIDTH -180, HEIGHT - 200)
+		show_hud(screen, "$3000 LVL 3 MOVE SPEED (f)", 32, WIDTH -180, HEIGHT - 170)
+		show_hud(screen, "$1000 LVL 2 SHIELDS (g)", 32, WIDTH -150, HEIGHT / 2)
+		show_hud(screen, "$3000 LVL 3 SHIELDS (h)", 32, WIDTH - 150, HEIGHT / 1.8)
 		show_hud(screen, "Press Enter Key to PLAY!", 58 , WIDTH / 2, HEIGHT * 5/6)
 		pygame.display.flip()
 
@@ -137,13 +137,19 @@ class pilot(pygame.sprite.Sprite):
 		if fireratelevel == 1:					# FIRERATE LEVEL WAS TESTED AND IT WORKS FINE
 			self.delay = 500
 		if fireratelevel == 2:
-			self.delay = 300
+			self.delay = 20
 		if fireratelevel == 3:
-			self.delay = 150
+			self.delay = 100
 		self.last_shot = pygame.time.get_ticks()
 		self.shield = 200
 
 	def fire(self):
+		if fireratelevel == 1:
+			self.delay = 500
+		if fireratelevel == 2:
+			self.delay = 300
+		if fireratelevel == 3:
+			self.delay = 150
 		now = pygame.time.get_ticks()
 		if now - self.last_shot > self.delay:
 			self.last_shot = now
@@ -171,7 +177,6 @@ class pilot(pygame.sprite.Sprite):
 				missles.add(missle3a)
 				missles.add(missle3b)
 				missles.add(missle3c)
-
 			bulletsnd1.play()
 
 	def update(self):
@@ -340,12 +345,12 @@ for i in range(5):								# adding random blocks for enemies
 	enemies.add(e)
 
 
-#fireratelevel = 1					moved to top of file could not be seen by pilot constructor.  determines how quickly the pilot can fire used in pilot class, all of these variables manipulate values in pilot class
+#fireratelevel = 1					 moved to top of file could not be seen by pilot constructor.  determines how quickly the pilot can fire used in pilot class, all of these variables manipulate values in pilot class
 misslelevel = 1						# level of missle upgrades one is base level determines number of rockets to shoot
 shieldlevel = 1						# level of shield upgrades 1 are base shields, as we upgrade we take less dmg from hits as handled below in COLLISIONS SECTION
 speedlevel = 1						# these should probably become instance variables of the pilot class, base level for speed of pilot
 lives = 3						# create get and set functions for these instance variables later
-							# maybe amount of money the character has to buy upgrades
+totalkilled = 0							# maybe amount of money the character has to buy upgrades
 score = 0						# for MAIN LOOP FOR THE GAME
 run = True
 
@@ -411,7 +416,7 @@ while run:
 		gameState = "play"
 
 	if (gameState == "over"):
-
+		totalkilled = 0
 		speedlevel = 1				#resetting the game , ship, score, and cash once the game is over
 		misslelevel = 1
 		fireratelevel = 1
@@ -474,17 +479,19 @@ while run:
 
 		collisions = pygame.sprite.groupcollide(enemies,missles, True, True) 							# first true to delete enemy second true to delete missle as it has exploded
 		for col in collisions:
+			totalkilled = totalkilled + 1
 			explsnd1.play()
 			explshow = explosion(col.rect.center, 'big')									# did a missle hit an enemy
 			all_sprites.add(explshow)											# could have multiple of these functions for each enemy
 			#score += 100
-			if score >= 1000 and score < 2000:
+			#if score >= 1000 and score < 2000:
+			if totalkilled > 20:
 				gamelevel = 2
-			if score >= 2000 and score < 3000:
+			if totalkilled > 50:
 				gamelevel = 3
-			if score >= 3000 and score < 4000:
+			if totalkilled > 75:
 				gamelevel = 4
-			if score >= 4000:
+			if totalkilled > 100:
 				gamelevel = 5
 			if gamelevel == 1:
 				score += 100
