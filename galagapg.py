@@ -264,6 +264,8 @@ class bigEnemy(pygame.sprite.Sprite):                                           
 		self.isAlive = True
 		self.onScreen = False
 		self.inDive = False
+		self.diveDown = False
+		self.diveUp = False
 		self.health = 500         #make dependent on level
 		self.horizontalDir = True #true is left, false is right
 		self.verticalDir = True #true is down, false is up
@@ -296,13 +298,30 @@ class bigEnemy(pygame.sprite.Sprite):                                           
 			self.verticalDir = False
 		elif(self.rect.y < 16):#move down
 			self.verticalDir = True
+
+		#when to dive
+		if((self.persTime % 200 == 0) and not self.inDive):
+			self.inDive = True		
+			self.diveDown = True
 		########################################MOVEMENT BELOW
 		if(not self.onScreen):
 			self.rect.y += self.speedy#descend into screen
 		elif(self.onScreen):
 			#now indive conditional
 			if(self.inDive):
-				print("indive")		
+		#		print("in the dive")
+				#move, check
+				if(self.diveDown):
+					self.rect.y+=18
+					if((self.rect.y+self.rect.height)>=HEIGHT):#hit bottom, go up
+						self.diveUp =True
+						self.diveDown = False	
+				else:#dive up
+					self.rect.y -= 12
+					if(self.rect.y < 16):
+						self.rect.y = 16
+						self.diveUp = False
+						self.inDive = False #end the dive
 			else:	#regular movement
 				if(self.horizontalDir):#move left
 					self.rect.x-=self.speedx
