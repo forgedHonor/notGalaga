@@ -279,10 +279,10 @@ class bigEnemy(pygame.sprite.Sprite):                                           
 		self.image = pygame.transform.scale(bigEnemyPic,(150,150))
 		self.image.set_colorkey(BLACK)
 		self.rect = self.image.get_rect()                                                       # half of image width
-		self.radius = int(self.rect.width * .85 / 2)
+		self.radius = int(self.rect.width)# * .95 / 2)
 		#initial x is above the center of the screen
 		self.rect.x = WIDTH/2
-		self.rect.y = -190#because it is 150 tall
+		self.rect.y = -(self.rect.height+40)#because it is 150 tall
 		##############################################
 		self.speedy = 20
 		self.speedx = 10
@@ -443,6 +443,7 @@ totalkilled = 0							# maybe amount of money the character has to buy upgrades
 score = 0						# for MAIN LOOP FOR THE GAME
 run = True
 
+motherShip = bigEnemy()
 
 posChecker = 1
 pygame.mixer.music.play(loops = -1)
@@ -566,7 +567,18 @@ while run:
 					gameState = "upgrade"
 		all_sprites.update()													# update all the sprites
 
-		collisions = pygame.sprite.groupcollide(enemies,missles, True, True) 							# first true to delete enemy second true to delete missle as it has exploded
+		collisions = pygame.sprite.groupcollide(enemies,missles, True, True) # first true to delete enemy second true to delete missle as it has exploded
+		collisions2 = pygame.sprite.groupcollide(allMothers,missles, False, True)
+		for col in collisions2:
+			explsnd1.play()
+			explshow = explosion(col.rect.center,'big')
+			all_sprites.add(explshow)
+			#take away motherShip health
+			motherShip.health -= 10
+			print(motherShip.health)
+			if(motherShip.health <=0):
+				all_sprites.remove(motherShip)
+			
 		for col in collisions:
 			totalkilled = totalkilled + 1
 			explsnd1.play()
@@ -595,14 +607,14 @@ while run:
 			e = enemy()
 			all_sprites.add(e)
 			enemies.add(e)
+		#########some mother ship code
 		#check for mother ship spawning
-		if((totalkilled==150) or (totalkilled == 155) or (totalkilled == 160)):
-			totalkilled+=1
-			bE = bigEnemy()
-			all_sprites.add(bE)
+		if(totalkilled==1):
+			totalkilled+=1#so it doesn't continuously do it
+			all_sprites.add(motherShip)
 			#enemies.add(bE)
-			allMothers.add(bE)
-			
+			allMothers.add(motherShip)
+		
 		collisions = pygame.sprite.spritecollide(pilot1, enemies, True, pygame.sprite.collide_circle)	# see if enemy ran into the pilot
 		for col in collisions:
 														# this could work if we make bigger enemies for harder levels
