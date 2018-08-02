@@ -308,6 +308,7 @@ class bigEnemy(pygame.sprite.Sprite):                                           
 		if((self.persTime % 200 == 0) and not self.inDive):
 			self.inDive = True		
 			self.diveDown = True
+			self.persTime -= random.randrange(50)
 		########################################MOVEMENT BELOW
 		if(not self.onScreen):
 			self.rect.y += self.speedy#descend into screen
