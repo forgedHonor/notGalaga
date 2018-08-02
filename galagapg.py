@@ -16,7 +16,7 @@ sounddir = path.join(path.dirname(__file__),'thenoise')
 
 WIDTH = 800										# DIMENSIONS OF THE GAME
 HEIGHT = 700										# needs to fit on my laptop had to shrink it
-FPS = 60										# CHANGE BETWEEN 30 AND 60
+FPS = 40										# CHANGE BETWEEN 30 AND 60
 
 											# colors are...
 BLUE = (0,0,255)
@@ -279,7 +279,7 @@ class bigEnemy(pygame.sprite.Sprite):                                           
 		self.image = pygame.transform.scale(bigEnemyPic,(150,150))
 		self.image.set_colorkey(BLACK)
 		self.rect = self.image.get_rect()                                                       # half of image width
-		self.radius = int(self.rect.width)# * .95 / 2)
+		self.radius = int(self.rect.width * .95 / 2)
 		#initial x is above the center of the screen
 		self.rect.x = WIDTH/2
 		self.rect.y = -(self.rect.height+40)#because it is 150 tall

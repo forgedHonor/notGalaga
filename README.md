@@ -8,5 +8,8 @@ the mentioned upgrades menu, a currency system, a pause menu, and a main menu. A
 Osterer was responsible for building the pilot class and all actions associated with it, firing, moving, and upgrading. Chris also designed the basic 5 levels of
 Enemies that we see as the player progresses through the game. Chris also worked on setting up the initial game window, and designing the upgrade screen. Chris
 also set up the collisions between enemy and pilot, and also the collisions between the missle and the enemy ships. We originally had the idea to have the enemies
-fly in special patters around the screen but ended up making them move in a more linear fashion towards the pilot. We somewhat implemented this with the boss
-enemy that appears at the end of the game as it does implement a special set of moves.
+fly in special patters around the screen but ended up making them move in a more linear fashion towards the pilot. Chris also designed the game over screen. We somewhat
+implemented this with the boss enemy that appears at the end of the game as it does implement a special set of moves. Christian was responsible for designing the
+main menu, and its functionality. Christian also designed the the big bad boss enemy that appears at the end of the game including its special movements and dives. 
+He also designed the collisions	for the boss ship. Christian also worked on the design of the pause menu and its events. Christian also designed the settings page
+that enables saves and loads
