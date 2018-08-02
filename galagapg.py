@@ -574,11 +574,17 @@ while run:
 			explshow = explosion(col.rect.center,'big')
 			all_sprites.add(explshow)
 			#take away motherShip health
-			motherShip.health -= 10
+			motherShip.health -= 2
 			print(motherShip.health)
 			if(motherShip.health <=0):
 				all_sprites.remove(motherShip)
-			
+		#Now for mother collision with player
+		collisions2 = pygame.sprite.groupcollide(allMothers,pilot1,False,False)
+		for col in collisions:
+			explsnd1.play()
+			explshow = explosion(col.rect.center,'big')
+			pilot1.shield-=1000
+
 		for col in collisions:
 			totalkilled = totalkilled + 1
 			explsnd1.play()
