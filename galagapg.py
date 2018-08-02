@@ -261,6 +261,85 @@ class enemy(pygame.sprite.Sprite):							# basic enemy ship class
 			self.rect.x = random.randrange(0 + self.rect.width * 2 , WIDTH - self.rect.width * 2)
 			self.rect.y = random.randrange(-100,-40)
 			self.speedy = random.randrange(10,20)
+###big bad enemy############################################################################################
+class bigEnemy(pygame.sprite.Sprite):                                                      # basic enemy ship class
+	def __init__(self): #initialize alive and on screen and inDive
+
+		self.persTime = 1
+		self.isAlive = True
+		self.onScreen = False
+		self.inDive = False
+		self.diveDown = False
+		self.diveUp = False
+		self.health = 500         #make dependent on level
+		self.horizontalDir = True #true is left, false is right
+		self.verticalDir = True #true is down, false is up
+		#initialize the sprite
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.transform.scale(bigEnemyPic,(150,150))
+		self.image.set_colorkey(BLACK)
+		self.rect = self.image.get_rect()                                                       # half of image width
+		self.radius = int(self.rect.width * .85 / 2)
+		#initial x is above the center of the screen
+		self.rect.x = WIDTH/2
+		self.rect.y = -190#because it is 150 tall
+		##############################################
+		self.speedy = 20
+		self.speedx = 10
+
+	def update(self):           # update on each frame
+		self.persTime+=1
+		#change booleans
+		if(self.rect.y > 15): #set on screen
+			self.onScreen=True
+			self.speedy = 10
+			self.speedx = 7
+		#change horiz and vert booleans
+		if(self.rect.x < 5):# left edge of screen
+			self.horizontalDir = False
+		elif(self.rect.x > WIDTH - (self.rect.width+1)):#right edge of screen
+			self.horizontalDir = True
+		if(self.rect.y > (self.rect.height + 16)):#move up
+			self.verticalDir = False
+		elif(self.rect.y < 16):#move down
+			self.verticalDir = True
+
+		#when to dive
+		if((self.persTime % 200 == 0) and not self.inDive):
+			self.inDive = True		
+			self.diveDown = True
+		########################################MOVEMENT BELOW
+		if(not self.onScreen):
+			self.rect.y += self.speedy#descend into screen
+		elif(self.onScreen):
+			#now indive conditional
+			if(self.inDive):
+		#		print("in the dive")
+				#move, check
+				if(self.diveDown):
+					self.rect.y+=18
+					if((self.rect.y+self.rect.height)>=HEIGHT):#hit bottom, go up
+						self.diveUp =True
+						self.diveDown = False	
+				else:#dive up
+					self.rect.y -= 12
+					if(self.rect.y < 16):
+						self.rect.y = 16
+						self.diveUp = False
+						self.inDive = False #end the dive
+			else:	#regular movement
+				if(self.horizontalDir):#move left
+					self.rect.x-=self.speedx
+				else:#move right
+					self.rect.x+=self.speedx
+				if(self.verticalDir):#go down
+					self.rect.y+=self.speedy
+				else:
+					self.rect.y-=self.speedy
+		
+		
+#################################################################################################################
+
 
 										# images
 										#class for the selector in menus(IN ALL MENUS MAKE SURE TO RUN UPDATE TO ENSURE THE SELECTOR RESPONDS TO ARROW KEYS)
@@ -281,6 +360,7 @@ background_rect = background.get_rect()
 
 pilotpic = pygame.image.load(path.join(imgdir, "alienship.png")).convert()
 
+bigEnemyPic = pygame.image.load(path.join(imgdir, "13.png")).convert()
 enemypic = pygame.image.load(path.join(imgdir, "enemy2.png")).convert()
 enemypic2 = pygame.image.load(path.join(imgdir, "lvl2enemy.png")).convert()
 enemypic3 = pygame.image.load(path.join(imgdir, "lvl3enemy.png")).convert()
@@ -334,11 +414,19 @@ explsnd1 = pygame.mixer.Sound(path.join(sounddir,"Explosion8.wav"))
 pygame.mixer.music.load(path.join(sounddir,"09 - Overdrive Sex Machine v0_5.mp3"))	# dont mind the name
 
 all_sprites = pygame.sprite.Group()
+allMothers = pygame.sprite.Group()
 missles = pygame.sprite.Group()
 enemies = pygame.sprite.Group()							# group of enemies
 pilot1 = pilot()
 all_sprites.add(pilot1)
 
+################3
+#testing purpose only
+bE = bigEnemy()
+all_sprites.add(bE)
+#enemies.add(bE)
+allMothers.add(bE)
+################
 for i in range(5):								# adding random blocks for enemies
 	e = enemy()
 	all_sprites.add(e)
@@ -446,7 +534,7 @@ while run:
 						enemies = pygame.sprite.Group()       # group of enemies
 						pilot1 = pilot()
 						all_sprites.add(pilot1)
-
+							
 						for i in range(5):
 							e = enemy()
 							all_sprites.add(e)
