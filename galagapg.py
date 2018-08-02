@@ -37,6 +37,39 @@ clock = pygame.time.Clock()
 fireratelevel = 1						#THIS HAD TO BE MOVED TO THE TOP AWAY FROM THE OTHER VARIABLES THAT CAN BE UPGRADED
 gamelevel = 1							# overall level of the game
 
+def savegame(fireLvl,missileLvl,shieldLvl,speedLvl,numLives,numScore,totalKills, gamelevel):
+	#os.system()
+	fileName = "svfile" #need to make it userinput
+	if(os.path.isfile(filename)):
+		os.system("rm " + fileName)
+	
+	#when file exists
+	f = open(tFile,'w')
+	
+	f.write(str(fireLvl))
+	f.write(str(missileLvl))
+	f.write(str(shieldLvl))
+	f.write(str(speedLvl))
+	f.write(str(numLives))
+	f.write(str(numScore))
+	f.write(str(totalKills))
+	f.write(str(gamelevel))
+	f.close()
+
+def loadgame():
+	fileName = "svfile"
+	if(os.path.isfile(filename)):
+		f = open(fileName,'r')
+		fireratelevel=f.readline()
+		missilelevel =f.readline()
+		shieldlevel=f.readline()
+		speedlevel=f.readline()
+		lives=f.readline()
+		score=f.readline()
+		f.close()
+
+
+
 def showshield(surf, x, y, amount):
 	if amount < 0:
 		amount = 0
@@ -770,8 +803,11 @@ while run:
 						soundsound = True
 				elif(event.key == pygame.K_q):
 					gameState = "Main Menu"
-				#elif(event.key == pygame.K_1):
-				#elif(event.key == pygame.K_2):
+				elif(event.key == pygame.K_1):
+					savegame(fireratelevel,missilelevel, shieldlevel, speedlevel, lives, score, totalkilled, gamelevel)
+				elif(event.key == pygame.K_2):
+					loadgame()
+
 		settingsRec = settingsPic.get_rect()
 		screen = pygame.display.set_mode((settingsRec.width,settingsRec.height))
 		screen.fill(BLACK)
