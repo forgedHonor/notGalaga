@@ -380,6 +380,7 @@ pause_rec.x = background_rect.x + (WIDTH/2 - pause_rec.width/2)
 pause_rec.y = background_rect.y + (HEIGHT/2 - pause_rec.height/2)
 
 homePic = pygame.image.load(path.join(imgdir, "homePage.png")).convert()
+settingsPic = pygame.image.load(path.join(imgdir, 'settings.png')).convert()
 selectorPic = pygame.image.load(path.join(imgdir, "selector.png")).convert()
 										#selector details
 selectorPauseImage = pygame.transform.scale(selectorPic, (20,20))
@@ -448,7 +449,7 @@ motherShip = bigEnemy()
 posChecker = 1
 pygame.mixer.music.play(loops = -1)
 pygame.mixer.music.set_volume(10.0)
-gameState = "upgrade"
+gameState = "Main Menu"
 while run:
 	clock.tick(FPS)
 	if (gameState == "upgrade"):
@@ -618,7 +619,7 @@ while run:
 			enemies.add(e)
 		#########some mother ship code
 		#check for mother ship spawning
-		if(totalkilled==1):
+		if(totalkilled==155):
 			totalkilled+=1#so it doesn't continuously do it
 			all_sprites.add(motherShip)
 			#enemies.add(bE)
@@ -743,7 +744,22 @@ while run:
 		#now draw mainSelect
 		screen.blit(selectorMainImage,selectMainRect)
 		pygame.display.flip()
-
+	if(gameState == "settings"):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				print("Quiting...")
+				run = False
+			elif event.type == pygame.KEYDOWN:
+				if(event.key == pygame.K_S):#sm12
+				elif(event.key == pygame.K_M):
+				elif(event.key == pygame.K_1):
+				elif(event.key == pygame.K_2):
+			
+		settingsRec = settingsPic.get_rect()
+		screen = pygame.display.set_mode((settingsRec.width,settingsRec.height))
+		screen.fill(BLACK)
+		screen.blit(settingsPic,settingsRec)
+		pygame.display.flip()
 	#screen.fill(BLACK)
 	#screen.blit(background, background_rect)
 	#all_sprites.draw(screen)
