@@ -584,6 +584,8 @@ while run:
 			explsnd1.play()
 			explshow = explosion(col.rect.center,'big')
 			gameState = "over"
+			motherShip.rect.x = WIDTH/2
+			motherShip.rect.y = -(motherShip.rect.height+40)#because it is 150 tall
 			allMothers.remove(motherShip)
 
 		for col in collisions:
