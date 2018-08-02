@@ -579,11 +579,12 @@ while run:
 			if(motherShip.health <=0):
 				all_sprites.remove(motherShip)
 		#Now for mother collision with player
-		collisions2 = pygame.sprite.groupcollide(allMothers,pilot1,False,False)
-		for col in collisions:
+		collisions2 = pygame.sprite.spritecollide(pilot1, allMothers, False, pygame.sprite.collide_circle)   # see if enemy ran into the pilot
+		for col in collisions2:
 			explsnd1.play()
 			explshow = explosion(col.rect.center,'big')
-			pilot1.shield-=1000
+			gameState = "over"
+			allMothers.remove(motherShip)
 
 		for col in collisions:
 			totalkilled = totalkilled + 1
